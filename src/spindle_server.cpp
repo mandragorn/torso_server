@@ -91,13 +91,7 @@ int main(int argc, char** argv) {
 
 	ROS_INFO("Action server is active and spinning...");
 
-	//ros::spin();
-	while(nh.ok()) {
-		ros::spinOnce();
-		//ROS_INFO("Server status = %s", as_->)
-	}
-
-
+	ros::spin();
 
 	return 0;
 }
