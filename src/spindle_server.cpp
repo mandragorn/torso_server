@@ -40,7 +40,6 @@ void publishRef(const amigo_actions::AmigoSpindleCommandGoalConstPtr& spindle_go
 }
 
 void goalCb(const amigo_actions::AmigoSpindleCommandGoalConstPtr& spindle_goal) {
-    printf("Goal callback\n");
 	ros::NodeHandle n;
 
 	meas_received = false;
@@ -70,8 +69,6 @@ void goalCb(const amigo_actions::AmigoSpindleCommandGoalConstPtr& spindle_goal) 
     }
 
     spindle_sub.shutdown();
-
-    printf("Goal callback - end\n");
 }
 
 int main(int argc, char** argv) {
