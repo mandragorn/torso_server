@@ -9,8 +9,9 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/amigo_spindle_server</url>
   <depend package="roscpp"/>
-  <depend package="std_msgs"/>
-  <depend package="amigo_msgs"/>
+  <!--<depend package="std_msgs"/>-->
+  <depend package="sensor_msgs"/>
+  <!--<depend package="amigo_msgs"/>-->
   <depend package="amigo_actions"/>
   <depend package="actionlib"/>
   <depend package="actionlib_msgs"/>
