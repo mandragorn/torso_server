@@ -12,9 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
 )
 
-## System dependencies are found with CMake's conventions
-find_package(Boost REQUIRED COMPONENTS thread)
-
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -58,12 +55,10 @@ add_executable(spindle_server_test_client src/test_client.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(spindle_server
-  ${Boost_LIBRARIES}
   ${catkin_LIBRARIES}
 )
 
 target_link_libraries(spindle_server_test_client
-  ${Boost_LIBRARIES}
   ${catkin_LIBRARIES}
 )
 
