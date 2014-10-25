@@ -73,7 +73,6 @@ void goalCb(const control_msgs::FollowJointTrajectoryGoalConstPtr& torso_goal) {
             n_joints = goal->trajectory.joint_names.size();
             torso_ref.name = goal->trajectory.joint_names;
             feedback.joint_names = goal->trajectory.joint_names;
-            //initJointStateMessage(torso_goal->trajectory.joint_names, torso_ref);
         }
 
         if (goal_index == goal->trajectory.points.size()) {
@@ -81,14 +80,20 @@ void goalCb(const control_msgs::FollowJointTrajectoryGoalConstPtr& torso_goal) {
             result.error_code = 0;
             as_->setSucceeded(result, "Torso goal succeeded!");
         } else {
-
             // Publish reference
             torso_ref.position = goal->trajectory.points[goal_index].positions;
             torso_ref.velocity = goal->trajectory.points[goal_index].velocities;
             torso_ref.effort = goal->trajectory.points[goal_index].effort;
             torso_pub_.publish(torso_ref);
 
-            // Publish
+            // Publish feedback
+            feedback.header.stamp = ros::Time::now();
+            feedback.actual.positions = torso_meas_.position;
+            feedback.desired = goal->trajectory.points[goal_index];
+            // ToDo: error?
+            as_->publishFeedback(feedback);
+
+            // Count number of converged joints
             unsigned int n_converged = 0;
             for (unsigned int i = 0; i < n_joints; i++) {
                 if (fabs(torso_ref.position[i] - torso_meas_.position[i]) < EPSILON) {
@@ -98,12 +103,6 @@ void goalCb(const control_msgs::FollowJointTrajectoryGoalConstPtr& torso_goal) {
             if (n_converged == n_joints) {
                 ++goal_index;
             }
-
-            feedback.header.stamp = ros::Time::now();
-            feedback.actual.positions = torso_meas_.position;
-            feedback.desired = goal->trajectory.points[goal_index];
-            // ToDo: error?
-            as_->publishFeedback(feedback);
 
         }
 
@@ -120,7 +119,7 @@ int main(int argc, char** argv) {
     ros::init(argc, argv, "torso_server");
 	ros::NodeHandle nh("~");
 
-    torso_pub_ = nh.advertise<sensor_msgs::JointState>("references", 100);
+    torso_pub_ = nh.advertise<sensor_msgs::JointState>("references", 1);
     torso_sub_ = nh.subscribe("measurements", 10, &torsoMeasurementCb);
 
     as_ = new actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction>(nh, nh.getNamespace(), &goalCb, false);
