@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <node pkg="torso_server" type="torso_server" respawn="false" name="torso_server" output="screen" ns="sergio">
+        <remap from="/sergio/torso_server/references" to="/sergio/torso/references"/>
+        <remap from="/sergio/torso_server/measurements" to="/sergio/torso/measurements"/>
+    </node>
+
+</launch>
