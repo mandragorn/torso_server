@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-
-<launch>
-
-    <node pkg="amigo_spindle_server" type="spindle_server" respawn="false" name="spindle_server" output="screen"/>
-
-</launch>
