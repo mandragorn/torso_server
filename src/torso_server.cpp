@@ -27,21 +27,17 @@ void torsoMeasurementCb(const sensor_msgs::JointStateConstPtr& meas) {
     meas_received = true;
 }
 
-//void publishRef(const control_msgs& spindle_goal) {
-//    torso_ref_ = sensor_msgs::JointState();
-//    torso_ref_.header.stamp = ros::Time::now();
-//    torso_ref_.name.push_back("torso_joint");
-//    torso_ref_.position.push_back(spindle_goal->spindle_height);
-//    spindle_pub_.publish(torso_ref_);
-//}
-
-//void initJointStateMessage(const std::vector<std::string>& joint_names, sensor_msgs::JointState& msg) {
-//    unsigned int n_joints = joint_names.size();
-//    msg.name = joint_names;
-//    msg.position.resize(n_joints, 0.0);
-//    msg.velocity.resize(n_joints, 0.0);
-//    msg.effort.resize(n_joints, 0.0);
-//}
+void setGoalTolerance(const control_msgs::FollowJointTrajectoryGoalConstPtr goal, std::vector<double>& goal_tolerance) {
+    int n_joints = goal->trajectory.joint_names.size();
+    goal_tolerance.resize(n_joints, EPSILON);
+    for (unsigned int i = 0; i < n_joints; i++) {
+        for (unsigned int j = 0; j < goal->goal_tolerance.size(); j++) {
+            if (goal->trajectory.joint_names[i] == goal->goal_tolerance[j].name) {
+                goal_tolerance[i] = goal->goal_tolerance[j].position;
+            }
+        }
+    }
+}
 
 void goalCb(const control_msgs::FollowJointTrajectoryGoalConstPtr& torso_goal) {
 
@@ -55,7 +51,9 @@ void goalCb(const control_msgs::FollowJointTrajectoryGoalConstPtr& torso_goal) {
     int n_joints = goal->trajectory.joint_names.size();
     torso_ref.name = goal->trajectory.joint_names;
     feedback.joint_names = goal->trajectory.joint_names;
-    //initJointStateMessage(goal->trajectory.joint_names, torso_ref);
+    std::vector<double> goal_tolerance;
+    setGoalTolerance(goal, goal_tolerance);
+    ROS_INFO("Goal tolerance = %f", goal_tolerance[0]);
 
     while(n.ok() && as_->isActive()) {
 
@@ -63,7 +61,6 @@ void goalCb(const control_msgs::FollowJointTrajectoryGoalConstPtr& torso_goal) {
 
         // ToDo: check time?
         // ToDo: assumes measurements and references in the same order
-        // ToDo: make epsilon variable/dependent on
 
         // Check if new goal is available
         if (as_->isNewGoalAvailable()) {
@@ -73,6 +70,7 @@ void goalCb(const control_msgs::FollowJointTrajectoryGoalConstPtr& torso_goal) {
             n_joints = goal->trajectory.joint_names.size();
             torso_ref.name = goal->trajectory.joint_names;
             feedback.joint_names = goal->trajectory.joint_names;
+            setGoalTolerance(goal, goal_tolerance);
         }
 
         if (goal_index == goal->trajectory.points.size()) {
