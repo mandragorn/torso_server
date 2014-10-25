@@ -53,7 +53,6 @@ void goalCb(const control_msgs::FollowJointTrajectoryGoalConstPtr& torso_goal) {
     feedback.joint_names = goal->trajectory.joint_names;
     std::vector<double> goal_tolerance;
     setGoalTolerance(goal, goal_tolerance);
-    ROS_INFO("Goal tolerance = %f", goal_tolerance[0]);
 
     while(n.ok() && as_->isActive()) {
 
@@ -94,7 +93,7 @@ void goalCb(const control_msgs::FollowJointTrajectoryGoalConstPtr& torso_goal) {
             // Count number of converged joints
             unsigned int n_converged = 0;
             for (unsigned int i = 0; i < n_joints; i++) {
-                if (fabs(torso_ref.position[i] - torso_meas_.position[i]) < EPSILON) {
+                if (fabs(torso_ref.position[i] - torso_meas_.position[i]) < goal_tolerance[i]) {
                     ++n_converged;
                 }
             }
