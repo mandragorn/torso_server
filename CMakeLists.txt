@@ -1,36 +1,68 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(amigo_spindle_server)
+project(torso_server)
 
 find_package(catkin REQUIRED COMPONENTS
-  actionlib
-  actionlib_msgs
-  amigo_actions
-  roscpp
-  sensor_msgs
 )
+
+# find_package(Boost REQUIRED COMPONENTS system program_options)
+# find_package(PCL REQUIRED)
+# find_package(OpenCV REQUIRED)
+
+# ------------------------------------------------------------------------------------------------
+#                                     ROS MESSAGES AND SERVICES
+# ------------------------------------------------------------------------------------------------
+
+# Generate messages
+# add_message_files(
+#    FILES
+#    message1.msg
+#    ...
+# )
+
+# Generate services
+# add_service_files(
+#    FILES
+#    service1.srv
+#    ...
+# )
+
+# Generate added messages and services with any dependencies listed here
+# generate_messages(
+#    DEPENDENCIES
+#    geometry_msgs
+#    ...
+# )
+
+# ------------------------------------------------------------------------------------------------
+#                                          CATKIN EXPORT
+# ------------------------------------------------------------------------------------------------
 
 catkin_package(
-  CATKIN_DEPENDS actionlib actionlib_msgs amigo_actions roscpp sensor_msgs
+#  INCLUDE_DIRS include
+#  LIBRARIES bla
+#  CATKIN_DEPENDS other_catkin_pkg
+#  DEPENDS system_lib
 )
 
-###########
-## Build ##
-###########
+# ------------------------------------------------------------------------------------------------
+#                                              BUILD
+# ------------------------------------------------------------------------------------------------
 
 include_directories(
-  ${catkin_INCLUDE_DIRS}
+    include
+    ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(spindle_server src/spindle_server.cpp)
-add_executable(spindle_server_test_client src/test_client.cpp)
+# add_library(library_name
+#     src/lib_source_file1.cpp
+#     ...
+# )
+# target_link_libraries(library_name ${catkin_LIBRARIES})
 
-target_link_libraries(spindle_server
-  ${catkin_LIBRARIES}
-)
+# add_executable(exec_name
+#     src/source_file1.cpp
+#     ...
+# )
+# target_link_libraries(exec_name ${catkin_LIBRARIES})
 
-target_link_libraries(spindle_server_test_client
-  ${catkin_LIBRARIES}
-)
 
-add_dependencies(spindle_server ${catkin_EXPORTED_TARGETS})
-add_dependencies(spindle_server_test_client ${catkin_EXPORTED_TARGETS})
